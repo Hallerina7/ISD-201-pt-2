@@ -158,10 +158,10 @@
                  const groundY = 350;
                 const obstacleTop = groundY - ob.height;
 
-                const collided =
-                    chicken.x + chicken.width > ob.x &&
-                    chicken.x < ob.x + ob.width &&
-                    chicken.y + chicken.height > obstacleTop;
+            const collided =
+                chicken.x + chicken.width * 0.75 > ob.x &&  // Allow chicken to collide a bit earlier
+                chicken.x < ob.x + ob.width * 0.75 &&       // Allow chicken to collide later
+                chicken.y + chicken.height * 0.75 > obstacleTop
 
                 if (collided) {
                     gameOver();

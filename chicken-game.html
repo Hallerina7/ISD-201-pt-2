@@ -63,9 +63,17 @@
         // Load static chicken image
         const chickenImage = new Image();
         chickenImage.src = 'photos/chicken.png'; // Replace with your chicken image path
+
         chickenImage.onload = function() {
-            loop();
+            console.log("Image Loaded Successfully!");
+            // Now the image is loaded, start the game
+            startGame();
         };
+
+        chickenImage.onerror = function() {
+            console.error("Error loading the chicken image.");
+        };
+
         let chicken = {
             x: 50,
             y: 300,
@@ -79,7 +87,7 @@
         let obstacles = [];
         let obstacleTypes = ['🌵', '🚧', '🪨', '🐖','🍄','🐄'];
         let lastObstacleX = 800;
-        let obstacleMinGap = 200; // pixels between obstacles
+        let obstacleMinGap = 30; // pixels between obstacles
         let obstacleCooldown = 0;
         let gameRunning = false;
         let score = 0;
@@ -105,19 +113,18 @@
         }
 
         function createObstacle() {
-        // Only spawn if far enough from the last one
+            // Only spawn if far enough from the last one
             if (obstacles.length > 0) {
                 const last = obstacles[obstacles.length - 1];
                 if (last.x > canvas.width - obstacleMinGap) return;
             }
 
-        let size = 40 + Math.random() * 20;
-        let type = obstacleTypes[Math.floor(Math.random() * obstacleTypes.length)];
-        let newObstacle = { x: canvas.width, width: size, height: size, type };
-        obstacles.push(newObstacle);
-        lastObstacleX = newObstacle.x;
-}
-
+            let size = 80 + Math.random() * 20;
+            let type = obstacleTypes[Math.floor(Math.random() * obstacleTypes.length)];
+            let newObstacle = { x: canvas.width, width: size, height: size, type };
+            obstacles.push(newObstacle);
+            lastObstacleX = newObstacle.x;
+        }
 
         function loop() {
             if (!gameRunning) return;
@@ -140,7 +147,6 @@
             ctx.drawImage(chickenImage, chicken.x, chicken.y, chicken.width, chicken.height);
 
             // Obstacles
-           // NEW: Add cooldown logic
             obstacleCooldown--;
             if (obstacleCooldown <= 5) {
                 createObstacle();
@@ -154,21 +160,18 @@
                 ctx.fillText(ob.type, ob.x, 340);
 
                 // Collision
-              // Collision Detection
-                 const groundY = 350;
+                const groundY = 350;
                 const obstacleTop = groundY - ob.height;
 
-            const collided =
-                chicken.x + chicken.width * 0.25 > ob.x &&  // Allow chicken to collide a bit earlier
-                chicken.x < ob.x + ob.width * 0.25 &&       // Allow chicken to collide later
-                chicken.y + chicken.height * 0.25 > obstacleTop
+                const collided =
+                    chicken.x + chicken.width * 0.35 > ob.x &&  // Allow chicken to collide a bit earlier
+                    chicken.x < ob.x + ob.width * 0.35 &&       // Allow chicken to collide later
+                    chicken.y + chicken.height * 0.35 > obstacleTop;  // Allow chicken to collide even if it's a little higher
 
                 if (collided) {
                     gameOver();
                     return;
                 }
-
-                
 
                 if (ob.x + ob.width < 0) {
                     obstacles.splice(i, 1);

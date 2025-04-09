@@ -63,7 +63,9 @@
         // Load static chicken image
         const chickenImage = new Image();
         chickenImage.src = 'photos/chicken.png'; // Replace with your chicken image path
-
+        chickenImage.onload = function() {
+            loop();
+        };
         let chicken = {
             x: 50,
             y: 300,

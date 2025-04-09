@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chicken Jump Game</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #f9f5f8;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #startScreen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #f3f2f3;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+
+        #gameCanvas {
+            background-color: #05aff3;
+            border: 4px solid #333;
+        }
+
+        #scoreBoard {
+            margin-top: 10px;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="startScreen">
+        <h1>🐔 Chicken Jump!</h1>
+        <p>Press Space to Jump. Avoid obstacles!</p>
+        <button onclick="startGame()">Start Game</button>
+    </div>
+    <canvas id="gameCanvas" width="800" height="400"></canvas>
+    <div id="scoreBoard">
+        Score: <span id="score">0</span> | High Score: <span id="highScore">0</span>
+    </div>
+
+    <audio id="jumpSound" src="https://www.fesliyanstudios.com/play-mp3/387" preload="auto"></audio>
+    <audio id="gameOverSound" src="https://www.fesliyanstudios.com/play-mp3/6989" preload="auto"></audio>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreEl = document.getElementById('score');
+        const highScoreEl = document.getElementById('highScore');
+        const jumpSound = document.getElementById('jumpSound');
+        const gameOverSound = document.getElementById('gameOverSound');
+
+        // Load static chicken image
+        const chickenImage = new Image();
+        chickenImage.src = 'photos/chicken.png'; // Replace with your chicken image path
+
+        let chicken = {
+            x: 50,
+            y: 300,
+            width: 70,      // Bigger chicken
+            height: 70,
+            vy: 0,
+            gravity: 1.2,
+            jumpPower: -20  // Stronger jump
+        };
+
+        let obstacles = [];
+        let obstacleTypes = ['🌵', '🚧', '🪨', '🐖','🍄','🐄'];
+        let lastObstacleX = 800;
+        let obstacleMinGap = 200; // pixels between obstacles
+        let obstacleCooldown = 0;
+        let gameRunning = false;
+        let score = 0;
+        let highScore = localStorage.getItem('chickenHighScore') || 0;
+        highScoreEl.textContent = highScore;
+
+        function startGame() {
+            document.getElementById('startScreen').style.display = 'none';
+            chicken.y = 300;
+            chicken.vy = 0;
+            score = 0;
+            scoreEl.textContent = 0;
+            obstacles = [];
+            gameRunning = true;
+            loop();
+        }
+
+        function jump() {
+            if (chicken.y >= 300) {
+                chicken.vy = chicken.jumpPower;
+                jumpSound.play();
+            }
+        }
+
+        function createObstacle() {
+        // Only spawn if far enough from the last one
+            if (obstacles.length > 0) {
+                const last = obstacles[obstacles.length - 1];
+                if (last.x > canvas.width - obstacleMinGap) return;
+            }
+
+        let size = 40 + Math.random() * 20;
+        let type = obstacleTypes[Math.floor(Math.random() * obstacleTypes.length)];
+        let newObstacle = { x: canvas.width, width: size, height: size, type };
+        obstacles.push(newObstacle);
+        lastObstacleX = newObstacle.x;
+}
+
+
+        function loop() {
+            if (!gameRunning) return;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Ground
+            ctx.fillStyle = '#77dd77';
+            ctx.fillRect(0, 350, canvas.width, 50);
+
+            // Gravity and movement
+            chicken.vy += chicken.gravity;
+            chicken.y += chicken.vy;
+            if (chicken.y > 300) {
+                chicken.y = 300;
+                chicken.vy = 0;
+            }
+
+            // Draw chicken
+            ctx.drawImage(chickenImage, chicken.x, chicken.y, chicken.width, chicken.height);
+
+            // Obstacles
+           // NEW: Add cooldown logic
+            obstacleCooldown--;
+            if (obstacleCooldown <= 5) {
+                createObstacle();
+                obstacleCooldown = 60 + Math.random() * 100; // Wait 1-2.6 seconds
+            }
+
+            for (let i = obstacles.length - 1; i >= 0; i--) {
+                let ob = obstacles[i];
+                ob.x -= 6;
+                ctx.font = '30px serif'; // Smaller emoji
+                ctx.fillText(ob.type, ob.x, 340);
+
+                // Collision
+              // Collision Detection
+                 const groundY = 350;
+                const obstacleTop = groundY - ob.height;
+
+                const collided =
+                    chicken.x + chicken.width > ob.x &&
+                    chicken.x < ob.x + ob.width + 4 &&
+                    chicken.y + chicken.height > obstacleTop;
+
+                if (collided) {
+                    gameOver();
+                    return;
+                }
+
+                
+
+                if (ob.x + ob.width < 0) {
+                    obstacles.splice(i, 1);
+                    score++;
+                    scoreEl.textContent = score;
+                    if (score > highScore) {
+                        highScore = score;
+                        highScoreEl.textContent = highScore;
+                        localStorage.setItem('chickenHighScore', highScore);
+                    }
+                }
+            }
+
+            requestAnimationFrame(loop);
+        }
+
+        function gameOver() {
+            gameRunning = false;
+            gameOverSound.play();
+            alert("Game Over! Score: " + score);
+            document.getElementById('startScreen').style.display = 'flex';
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                if (!gameRunning && document.getElementById('startScreen').style.display !== 'none') {
+                    startGame();
+                } else {
+                    jump();
+                }
+            }
+        });
+    </script>
+</body>
+</html>

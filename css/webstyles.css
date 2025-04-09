@@ -1,0 +1,82 @@
+/* webstyles.css */
+
+/* Global reset and base styling */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #f7d2f2; /* Custom background */
+    font-family: 'Georgia', serif; /* Elegant font */
+    color: #333; /* Text color */
+}
+
+/* Header section */
+#top {
+    background-color: #ee62c4; /* Pink background for header */
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+/* Links styling */
+a {
+    color: #f839f2;
+    text-decoration: none;
+    font-size: 1.1em;
+    margin-right: 10px;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Styled box divs */
+.box {
+    background-color: #ee99dc; /* Light blue box background */
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+}
+h1{
+    color: white;
+}
+/* Heading styles */
+h2, h3 {
+    font-family: 'Georgia', serif;
+    color: #e934c1; /* Blue color for headers */
+}
+
+/* Adjust list styles for proper spacing */
+ul, ol {
+    margin-left: 20px;
+    padding-left: 20px;
+    line-height: 1.6;
+}
+
+/* Navigation Links */
+.list {
+    display: inline-block;
+    font-size: larger;
+    margin-right: 15px;
+}
+
+/* Image styling */
+img {
+    max-width: 100%; /* Responsive images */
+    height: auto;
+    margin-bottom: 10px;
+}
+
+/* Footer styles */
+footer {
+    background-color: #ee62c4;
+    color: white;
+    text-align: center;
+    padding: 15px;
+    margin-top: 20px;
+}

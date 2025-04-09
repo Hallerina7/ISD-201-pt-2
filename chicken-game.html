@@ -60,25 +60,14 @@
         const jumpSound = document.getElementById('jumpSound');
         const gameOverSound = document.getElementById('gameOverSound');
 
-        // Load static chicken image
-        const chickenImage = new Image();
-        chickenImage.src = 'photos/chicken.png'; // Replace with your chicken image path
-
-        chickenImage.onload = function() {
-            console.log("Image Loaded Successfully!");
-            // Now the image is loaded, start the game
-            startGame();
-        };
-
-        chickenImage.onerror = function() {
-            console.error("Error loading the chicken image.");
-        };
+        // Emoji for chicken
+        const chickenEmoji = '🐔';
 
         let chicken = {
             x: 50,
             y: 300,
-            width: 70,      // Bigger chicken
-            height: 70,
+            width: 70,      // Adjust size of the emoji
+            height: 70,     // Adjust size of the emoji
             vy: 0,
             gravity: 1.2,
             jumpPower: -20  // Stronger jump
@@ -143,8 +132,9 @@
                 chicken.vy = 0;
             }
 
-            // Draw chicken
-            ctx.drawImage(chickenImage, chicken.x, chicken.y, chicken.width, chicken.height);
+            // Draw chicken emoji
+            ctx.font = '70px Arial'; // Font size matches the emoji size
+            ctx.fillText(chickenEmoji, chicken.x, chicken.y + chicken.height / 1.5); // Positioning the emoji
 
             // Obstacles
             obstacleCooldown--;
@@ -156,10 +146,10 @@
             for (let i = obstacles.length - 1; i >= 0; i--) {
                 let ob = obstacles[i];
                 ob.x -= 6;
-                ctx.font = '30px serif'; // Smaller emoji
+                ctx.font = '30px serif'; // Smaller emoji for obstacles
                 ctx.fillText(ob.type, ob.x, 340);
 
-                // Collision
+                // Collision Detection
                 const groundY = 350;
                 const obstacleTop = groundY - ob.height;
 
@@ -207,3 +197,4 @@
     </script>
 </body>
 </html>
+
